@@ -1,0 +1,31 @@
+{
+  "name": "web-server",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node ./bin/www",
+    "start-nodemon": "nodemon ./bin/www"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "public/*"
+    ],
+    "delay": "1000"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/bluebird": "^3.5.18",
+    "@types/express": "^4.0.39",
+    "@types/mongoose": "^4.7.28",
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "express-ejs-layouts": "^2.3.1",
+    "express-fileupload": "^0.3.0",
+    "mongoose": "^4.13.4",
+    "morgan": "^1.9.0",
+    "nodemon": "^1.12.1",
+    "serve-favicon": "^2.4.5"
+  }
+}
