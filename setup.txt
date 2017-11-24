@@ -1,0 +1,232 @@
+    https://javascriptplayground.com/blog/2017/04/react-typescript/
+
+    install yarn
+        https://yarnpkg.com/lang/en/docs/install/
+
+    init
+        yarn init
+        
+    install typescript
+        yarn add typescript
+
+    install react
+        yarn add react react-dom
+
+    generate tsconfig.json
+        tsc --init
+
+    then make few changes on tsconfig.json
+    let tsconfig.json looks like below
+
+        {
+        "compilerOptions": {
+            /* Basic Options */
+            "target": "es6",
+            /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', or 'ESNEXT'. */
+            "module": "es6",
+            /* Specify module code generation: 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
+            // "lib": [],                             /* Specify library files to be included in the compilation:  */
+            // "allowJs": true,                       /* Allow javascript files to be compiled. */
+            // "checkJs": true,                       /* Report errors in .js files. */
+            "jsx": "preserve",
+            /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
+            // "declaration": true,                   /* Generates corresponding '.d.ts' file. */
+            "sourceMap": true,
+            /* Generates corresponding '.map' file. */
+            // "outFile": "./",                       /* Concatenate and emit output to single file. */
+            "outDir": "./ts_build",
+            /* Redirect output structure to the directory. */
+            // "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+            // "removeComments": true,                /* Do not emit comments to output. */
+            // "noEmit": true,                        /* Do not emit outputs. */
+            // "importHelpers": true,                 /* Import emit helpers from 'tslib'. */
+            // "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
+            // "isolatedModules": true,               /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
+            /* Strict Type-Checking Options */
+            "strict": true,
+            /* Enable all strict type-checking options. */
+            // "noImplicitAny": true,                 /* Raise error on expressions and declarations with an implied 'any' type. */
+            // "strictNullChecks": true,              /* Enable strict null checks. */
+            // "noImplicitThis": true,                /* Raise error on 'this' expressions with an implied 'any' type. */
+            // "alwaysStrict": true,                  /* Parse in strict mode and emit "use strict" for each source file. */
+            /* Additional Checks */
+            // "noUnusedLocals": true,                /* Report errors on unused locals. */
+            // "noUnusedParameters": true,            /* Report errors on unused parameters. */
+            // "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
+            // "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
+            /* Module Resolution Options */
+            // "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+            "baseUrl": "./src", /* Base directory to resolve non-absolute module names. */
+            // "paths": {}, /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+            // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
+            "typeRoots": [], /* List of folders to include type definitions from. */
+            // "types": [],    /* Type declaration files to be included in compilation. */
+            "allowSyntheticDefaultImports": true /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
+            /* Source Map Options */
+            // "sourceRoot": "./",                    /* Specify the location where debugger should locate TypeScript files instead of source locations. */
+            // "mapRoot": "./",                       /* Specify the location where debugger should locate map files instead of generated locations. */
+            // "inlineSourceMap": true,               /* Emit a single file with source maps instead of having a separate file. */
+            // "inlineSources": true,                 /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
+            /* Experimental Options */
+            // "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
+            // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
+        },
+        "exclude": [
+            "./node_modules"
+        ]
+        }
+
+    Setting up Webpack, Babel and TypeScript
+        yarn add webpack babel-core babel-loader babel-preset-es2015 babel-preset-react ts-loader webpack-dev-server
+        yarn add webpack-notifier
+
+    create folder 
+        ./src
+
+    create webpack.config.js like below
+
+        const webpack = require('webpack')
+        const path = require('path')
+        const WebpackNotifierPlugin = require('webpack-notifier')
+
+        module.exports = {
+            devtool: 'eval',
+            entry: {
+                index: 'index.tsx',
+            },
+            output: {
+                filename: '[name].bundle.js',
+                publicPath: 'dist',
+                path: path.resolve(__dirname, 'dist')
+            },
+            devServer: {
+                host: "127.0.0.1",
+                port: 3001,
+                historyApiFallback: true,
+                inline: true,
+                stats: {
+                    modules: false,
+                    chunks: false,
+                    children: false,
+                    chunkModules: false,
+                    hash: false,
+                },
+            },
+            resolve: {
+                extensions: ['.ts', '.tsx', '.js', '.jsx'],
+                modules: ['src', 'node_modules'],
+            },
+            module: {
+                loaders: [{
+                    test: /\.tsx?$/,
+                    loaders: ['babel-loader', 'ts-loader'],
+                    include: path.resolve(__dirname, 'src'),
+                }]
+            },
+            plugins: [
+                new WebpackNotifierPlugin(),
+            ],
+            watchOptions: {
+                // poll: 1000,
+            }
+        }
+
+    create .babelrc
+
+        {
+            "presets": ["es2015", "react"]
+        }
+
+    install @types
+        yarn add @types/react
+        yarn add @types/react-dom
+
+    install tslint
+        yarn add tslint tslint-react
+
+    create tslint.json like below
+
+        {
+            "defaultSeverity": "error",
+            "extends": [
+                "tslint:latest",
+                "tslint-react"
+            ],
+            "jsRules": {},
+            "rules": {
+                /*"quotemark": [true, "single", "jsx-double"],*/
+                "semicolon": [
+                    true,
+                    "always"
+                ],
+                "interface-name": [
+                    true,
+                    "always-prefix"
+                ],
+                "object-literal-sort-keys": false,
+                "no-console": false,
+                "no-empty": false,
+                "no-object-literal-type-assertion": false,
+                "trailing-comma": [
+                    true,
+                    {
+                        "multiline": "always",
+                        "singleline": "never"
+                    }
+                ],
+                "space-before-function-paren": false,
+                "ordered-imports": false,
+                "max-line-length": [
+                    false
+                ],
+                "jsx-wrap-multiline": false,
+                "jsx-no-lambda": false,
+                "prefer-conditional-expression": false,
+                "array-type": false
+            },
+            "rulesDirectory": []
+        }
+
+    add script in package.json
+    "scripts": {
+        "start": "webpack-dev-server",
+        "lint": "tslint --project tsconfig.json --fix"
+    }
+
+    run "yarn start"
+
+    create ./src/index.tsx
+
+        import React from 'react'
+        import ReactDOM from 'react-dom'
+
+        const App = () => {
+            return (
+                <div>
+                    <p>Hello world!</p>
+                </div>
+            )
+        }
+
+        ReactDOM.render(<App />, document.getElementById('app'))
+
+    create ./index.html
+
+        <!DOCTYPE html>
+        <html lang="en">
+
+        <head>
+            <meta charset="UTF-8">
+            <title>My Typescript App</title>
+        </head>
+
+        <body>
+            <div id="app"></div>
+            <script src="dist/index.bundle.js"></script>
+        </body>
+
+        </html>
+
+    run "yarn start"
+
+    零知識證明、環狀簽名、拜占庭容錯、Anti-ASIC、智慧合約
