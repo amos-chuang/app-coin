@@ -17,6 +17,10 @@ class BitoexService {
                 });
                 res.on("end", () => {
                     try {
+                        console.log("");
+                        console.log("bitoex output");
+                        console.log(output);
+                        console.log("");
                         var obj = JSON.parse(output);
                         var model = {};
                         model.buyPrice = parseInt(obj[0].replace(",", ""));
