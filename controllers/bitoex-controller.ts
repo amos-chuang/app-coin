@@ -20,4 +20,15 @@ export class Controller {
             });
         })
     }
+    public test1() {
+        var service = new BitoexService();
+        service.getPriceTest1().then((data) => {
+            this.res.send(data);
+        }).catch((err) => {
+            this.res.statusCode = 500;
+            this.res.json({
+                msg: new String(err)
+            });
+        })
+    }
 }
