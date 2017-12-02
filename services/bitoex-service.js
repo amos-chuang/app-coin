@@ -8,7 +8,7 @@ class BitoexService {
             var options = {};
             options.host = "proxy.hine.net";
             options.port = 80;
-            options.path = "www.bitoex.com/sync/dashboard_fixed/" + new Date().getTime();
+            options.path = "https://www.bitoex.com/sync/dashboard_fixed/" + new Date().getTime();
             //options.host = "www.bitoex.com";
             //options.path = "/sync/dashboard_fixed/" + new Date().getTime();
             options.method = "GET";
