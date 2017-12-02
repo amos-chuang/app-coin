@@ -1,13 +1,14 @@
+//https://api.bitfinex.com/v1/pubticker/IOTUSD
 import * as Bluebird from "bluebird";
 import * as https from "https";
-import { IBitoexPriceModel } from "../models/view-models/bitoex-price-model";
+import { IBitfinexPriceModel } from "../models/view-models/bitfinex-price-model";
 
-export class BitoexService {
-    public getPrice() {
-        return new Bluebird<IBitoexPriceModel>((resolve, reject) => {
+export class BitfinexService {
+    public getPrice(currencyName: string) {
+        return new Bluebird<IBitfinexPriceModel>((resolve, reject) => {
             var options = {} as https.RequestOptions;
-            options.host = "www.bitoex.com";
-            options.path = "/sync/dashboard_fixed/" + new Date().getTime();
+            options.host = "api.bitfinex.com";
+            options.path = "/v1/pubticker/" + currencyName;
             options.method = "GET";
             var output = "";
             var req = https.request(options, (res) => {
@@ -17,10 +18,7 @@ export class BitoexService {
                 });
                 res.on("end", () => {
                     try {
-                        var obj = JSON.parse(output) as string[];
-                        var model = {} as IBitoexPriceModel;
-                        model.buyPrice = parseInt(obj[0].replace(",", ""));
-                        model.sellPrice = parseInt(obj[1].replace(",", ""));
+                        var model = JSON.parse(output) as IBitfinexPriceModel;
                         resolve(model);
                     } catch (e) {
                         reject(e);

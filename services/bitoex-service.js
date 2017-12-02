@@ -1,11 +1,11 @@
-import * as Bluebird from "bluebird";
-import * as https from "https";
-import { IBitoexPriceModel } from "../models/view-models/bitoex-price-model";
-
-export class BitoexService {
-    public getPrice() {
-        return new Bluebird<IBitoexPriceModel>((resolve, reject) => {
-            var options = {} as https.RequestOptions;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Bluebird = require("bluebird");
+const https = require("https");
+class BitoexService {
+    getPrice() {
+        return new Bluebird((resolve, reject) => {
+            var options = {};
             options.host = "www.bitoex.com";
             options.path = "/sync/dashboard_fixed/" + new Date().getTime();
             options.method = "GET";
@@ -17,12 +17,13 @@ export class BitoexService {
                 });
                 res.on("end", () => {
                     try {
-                        var obj = JSON.parse(output) as string[];
-                        var model = {} as IBitoexPriceModel;
+                        var obj = JSON.parse(output);
+                        var model = {};
                         model.buyPrice = parseInt(obj[0].replace(",", ""));
                         model.sellPrice = parseInt(obj[1].replace(",", ""));
                         resolve(model);
-                    } catch (e) {
+                    }
+                    catch (e) {
                         reject(e);
                     }
                 });
@@ -34,3 +35,5 @@ export class BitoexService {
         });
     }
 }
+exports.BitoexService = BitoexService;
+//# sourceMappingURL=bitoex-service.js.map
