@@ -11,6 +11,10 @@ export class BitoexService {
             const url: string = "https://www.bitoex.com/sync/dashboard_fixed/" + new Date().getTime();
             const status: string = await page.open(url);
             const content = JSON.stringify(await page.property('content'));
+            console.log("");
+            console.log("bitoex content");
+            console.log(content);
+            console.log("");
             const matches = /<pre.*>(.*)<\/pre>/.exec(content);
             let data = null;
             if (matches != null) {

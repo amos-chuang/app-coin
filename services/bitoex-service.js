@@ -19,6 +19,10 @@ class BitoexService {
             const url = "https://www.bitoex.com/sync/dashboard_fixed/" + new Date().getTime();
             const status = yield page.open(url);
             const content = JSON.stringify(yield page.property('content'));
+            console.log("");
+            console.log("bitoex content");
+            console.log(content);
+            console.log("");
             const matches = /<pre.*>(.*)<\/pre>/.exec(content);
             let data = null;
             if (matches != null) {
