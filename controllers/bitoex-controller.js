@@ -8,16 +8,7 @@ class Controller {
     }
     query() {
         var service = new bitoex_service_1.BitoexService();
-        service.getPriceByPhantom().then((data) => {
-            this.res.json(data);
-        }).catch((err) => {
-            console.log(err);
-            this.res.statusCode = 500;
-            this.res.json({
-                msg: new String(err)
-            });
-        });
-        /*service.getPrice().then((data) => {
+        /*service.getPriceByPhantom().then((data) => {
             this.res.json(data);
         }).catch((err) => {
             console.log(err);
@@ -26,6 +17,15 @@ class Controller {
                 msg: new String(err)
             });
         });*/
+        service.getPrice().then((data) => {
+            this.res.json(data);
+        }).catch((err) => {
+            console.log(err);
+            this.res.statusCode = 500;
+            this.res.json({
+                msg: new String(err)
+            });
+        });
     }
 }
 exports.Controller = Controller;

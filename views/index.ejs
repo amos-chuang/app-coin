@@ -110,6 +110,13 @@
 
 <%- contentFor('scripts') %>
     <script>
+        $(function () {
+            $("#router").attr("src", "https://www.bitoex.com/sync/dashboard_fixed/" + new Date().getTime());
+            $("#tb").click(function () {
+                console.log($("#router").contents());
+                console.log($("#router").contents().find("body"));
+            });
+        });
         var app = null;
         window.onload = function () {
             app = new Vue({

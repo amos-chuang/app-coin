@@ -12,17 +12,7 @@ export class Controller {
     public query() {
         var service = new BitoexService();
 
-        service.getPriceByPhantom().then((data) => {
-            this.res.json(data);
-        }).catch((err) => {
-            console.log(err);
-            this.res.statusCode = 500;
-            this.res.json({
-                msg: new String(err)
-            });
-        });
-
-        /*service.getPrice().then((data) => {
+        /*service.getPriceByPhantom().then((data) => {
             this.res.json(data);
         }).catch((err) => {
             console.log(err);
@@ -31,5 +21,15 @@ export class Controller {
                 msg: new String(err)
             });
         });*/
+
+        service.getPrice().then((data) => {
+            this.res.json(data);
+        }).catch((err) => {
+            console.log(err);
+            this.res.statusCode = 500;
+            this.res.json({
+                msg: new String(err)
+            });
+        });
     }
 }
