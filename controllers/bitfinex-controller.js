@@ -10,6 +10,9 @@ class Controller {
         var currencyName = this.req.query.currencyName;
         var service = new bitfinex_service_1.BitfinexService();
         service.getPrice(currencyName).then((data) => {
+            this.res.header("Access-Control-Allow-Origin", '*');
+            this.res.header("Access-Control-Allow-Credentials", 'true');
+            this.res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
             this.res.json(data);
         }).catch((err) => {
             this.res.statusCode = 500;
