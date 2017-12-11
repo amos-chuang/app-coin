@@ -28,6 +28,17 @@ export class CoinoneService {
                     console.log("");
                     return Bluebird.resolve(res[0]);
                 } else {
+                    if (res.length > 0) {
+                        try {
+                            for (var i = 0; i < res.length - 3; i++) {
+                                TickerHistory.findById(res[i].id as string).then((res) => {
+                                    if (res) {
+                                        res.remove();
+                                    }
+                                });
+                            }
+                        } catch (e) { }
+                    }
                     return this.query(currencyName);
                 }
             }).then((res) => {

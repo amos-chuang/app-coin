@@ -24,6 +24,18 @@ class CoinoneService {
                     return Bluebird.resolve(res[0]);
                 }
                 else {
+                    if (res.length > 0) {
+                        try {
+                            for (var i = 0; i < res.length - 3; i++) {
+                                ticker_history_model_1.default.findById(res[i].id).then((res) => {
+                                    if (res) {
+                                        res.remove();
+                                    }
+                                });
+                            }
+                        }
+                        catch (e) { }
+                    }
                     return this.query(currencyName);
                 }
             }).then((res) => {
