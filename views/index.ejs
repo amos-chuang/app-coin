@@ -46,7 +46,13 @@
             <td>
                 <span v-text="bitoexBuyPriceUSD"></span>
             </td>
-            <td>
+            <td style="background-color:#ff79ff;font-weight:bold;" v-if="bitoexBuyPriceFee>0.15">
+                <span v-text="bitoexBuyPriceFee"></span>
+            </td>
+            <td style="background-color:#ffec45;font-weight:bold;" v-if="bitoexBuyPriceFee>0.1 && bitoexBuyPriceFee<=0.15">
+                <span v-text="bitoexBuyPriceFee"></span>
+            </td>
+            <td style="background-color:#2fff39;font-weight:bold;" v-if="bitoexBuyPriceFee<=0.1">
                 <span v-text="bitoexBuyPriceFee"></span>
             </td>
             <td>
@@ -71,17 +77,17 @@
             <th>Profit/Loss</th>
             <th>%</th>
         </tr>
-        <tr v-for="target in targetCurrencyList" :currencyName="target.name">
+        <tr v-for="target in bitfinexTargetCurrencyList" :currencyName="target.name">
             <td class="toggleButton" @click="toggleTradingData(target.name)">
                 <span v-text="target.display"></span>
             </td>
             <td>
-                <span v-if="bitfinexPriceList[target.name]" v-text="Math.round(bitfinexPriceList[target.name].last_price*100)/100"></span>
+                <span v-if="bitfinexPriceList[target.name]" v-text="Math.round(bitfinexPriceList[target.name].lastPrice*100)/100"></span>
             </td>
-            <td>0.5</td>
-            <td>7000</td>
-            <td>7500</td>
-            <td>+500</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
             <td></td>
         </tr>
         <tr style="display:none;" v-show="tradingList['BTCUSD'].isShow">
@@ -105,6 +111,22 @@
                 </table>
             </td>
         </tr>
+        <tr v-for="target in coinoneTargetCurrencyList" :currencyName="target.name">
+            <td class="toggleButton" @click="toggleTradingData(target.name)">
+                <span v-text="target.display"></span>
+            </td>
+            <td>
+                <span v-if="coinonePriceList[target.name]" v-text="Math.round(coinonePriceList[target.name].lastPrice*100)/100"></span>
+                <span>_( </span>
+                <span v-if="coinonePriceList[target.name]" v-text="Math.round(coinonePriceList[target.name].lastPrice/1100*100)/100"></span>
+                <span> )</span>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
     </table>
 </div>
 
@@ -124,7 +146,17 @@
                 data: {
                     currentDateTime: "",
                     favoriteCurrencyList: [],
-                    targetCurrencyList: [{ name: "BTCUSD", display: "BTC" }],
+                    bitfinexTargetCurrencyList: [
+                        { name: "BTCUSD", display: "BTC" },
+                        { name: "IOTUSD", display: "IOT" },
+                        { name: "ETHUSD", display: "ETH" },
+                        { name: "XMRUSD", display: "XMR" },
+                        { name: "LTCUSD", display: "LTC" },
+                    ],
+                    coinoneTargetCurrencyList: [
+                        { name: "BTCKRW", display: "BTC(K)" },
+                        { name: "IOTKRW", display: "IOT(K)" }
+                    ],
                     searchKeyword: "",
                     tradingList: {
                         BTCUSD: { isShow: false, data: [{ price: 100, qty: 3 }] }
@@ -139,6 +171,8 @@
                     bitoexSellPriceFee: 0,
                     //Bitfinex
                     bitfinexPriceList: {},
+                    //Coinone
+                    coinonePriceList: {},
                 },
                 methods: {
                     toggleTradingData: (currencyName) => {
@@ -190,22 +224,39 @@
                     var temp = app.bitfinexPriceList;
                     temp[currencyName] = data;
                     Vue.set(app, "bitfinexPriceList", temp);
+                    //console.log(temp);
                     refreshBitoexFee();
+                }
+            });
+        }
+        function queryCoinone(currencyName) {
+            $.ajax({
+                method: "GET",
+                url: "./coinone/query?currencyName=" + currencyName,
+                success: function (data) {
+                    var temp = app.bitfinexPriceList;
+                    temp[currencyName] = data;
+                    Vue.set(app, "coinonePriceList", temp);
+                    //console.log(temp);
                 }
             });
         }
         function refreshBitoexFee() {
             if (app.bitfinexPriceList['BTCUSD']) {
-                var buyPriceFee = (Math.round((((Math.round(app.bitoexBuyPrice * 100 / 30) / 100) / (Math.round(app.bitfinexPriceList['BTCUSD'].last_price * 100) / 100)) - 1) * 10000)) / 10000;
+                var buyPriceFee = (Math.round((((Math.round(app.bitoexBuyPrice * 100 / 30) / 100) / (Math.round(app.bitfinexPriceList['BTCUSD'].lastPrice * 100) / 100)) - 1) * 10000)) / 10000;
                 Vue.set(app, "bitoexBuyPriceFee", buyPriceFee);
-                var sellPriceFee = (Math.round((((Math.round(app.bitoexSellPrice * 100 / 30) / 100) / (Math.round(app.bitfinexPriceList['BTCUSD'].last_price * 100) / 100)) - 1) * 10000)) / 10000;
+                var sellPriceFee = (Math.round((((Math.round(app.bitoexSellPrice * 100 / 30) / 100) / (Math.round(app.bitfinexPriceList['BTCUSD'].lastPrice * 100) / 100)) - 1) * 10000)) / 10000;
                 Vue.set(app, "bitoexSellPriceFee", sellPriceFee);
             }
         }
         function refreshCurrencyPrice() {
-            for (var i = 0; i < app.targetCurrencyList.length; i++) {
-                var currencyName = app.targetCurrencyList[i].name;
+            for (var i = 0; i < app.bitfinexTargetCurrencyList.length; i++) {
+                var currencyName = app.bitfinexTargetCurrencyList[i].name;
                 queryBitfinex(currencyName);
+            }
+            for (var i = 0; i < app.coinoneTargetCurrencyList.length; i++) {
+                var currencyName = app.coinoneTargetCurrencyList[i].name;
+                queryCoinone(currencyName);
             }
         }
         function toggleTradingData(currencyName) {
@@ -216,6 +267,6 @@
                 tradingList[currencyName].isShow = true;
             }
             Vue.set(app, "tradingList", tradingList);
-            console.log(tradingList[currencyName].isShow);
+            //console.log(tradingList[currencyName].isShow);
         }
     </script>

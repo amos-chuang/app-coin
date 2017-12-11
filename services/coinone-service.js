@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Bluebird = require("bluebird");
 const https = require("https");
 const ticker_history_model_1 = require("../models/db-models/ticker-history-model");
-class BitfinexService {
+class CoinoneService {
     getPrice(currencyName) {
         return new Bluebird((resolve, reject) => {
             var findCondition = {
@@ -15,11 +15,11 @@ class BitfinexService {
             Bluebird.try(() => {
                 return ticker_history_model_1.default.find(findCondition).sort(sortCondition).then();
             }).then((res) => {
-                var effectiveTime = 6500;
+                var effectiveTime = 3000;
                 var now = new Date().getTime();
                 if (res.length > 0 && (now - res[0].createdAt.getTime()) < effectiveTime) {
                     console.log("");
-                    console.log("Bitfinex [" + res[0].currency + " : " + res[0].lastPrice + "] ... read from db _ time diff : " + (now - res[0].createdAt.getTime()));
+                    console.log("Coinone [" + res[0].currency + " : " + res[0].lastPrice + "] ... read from db _ time diff : " + (now - res[0].createdAt.getTime()));
                     console.log("");
                     return Bluebird.resolve(res[0]);
                 }
@@ -39,11 +39,11 @@ class BitfinexService {
         });
     }
     query(currencyName) {
-        //https://api.bitfinex.com/v1/pubticker/IOTUSD
+        //https://api.coinone.co.kr/ticker?currency=iota
         return new Bluebird((resolve, reject) => {
             var options = {};
-            options.host = "api.bitfinex.com";
-            options.path = "/v1/pubticker/" + currencyName.name;
+            options.host = "api.coinone.co.kr";
+            options.path = "/ticker?currency=" + currencyName.name;
             options.method = "GET";
             var output = "";
             var req = https.request(options, (res) => {
@@ -96,19 +96,15 @@ class BitfinexService {
     convertToTickerHistoryModel(data) {
         var result = new ticker_history_model_1.default;
         result.currency = data.currency;
-        result.lastPrice = data.last_price;
+        result.lastPrice = data.last;
         result.lowPrice = data.low;
         result.highPrice = data.high;
         return result;
     }
 }
-BitfinexService.CurrencyPairs = {
-    "BTCUSD": { displayName: "BTCUSD", name: "BTCUSD" },
-    "IOTUSD": { displayName: "IOTUSD", name: "IOTUSD" },
-    "XMRUSD": { displayName: "XMRUSD", name: "XMRUSD" },
-    "ETHUSD": { displayName: "ETHUSD", name: "ETHUSD" },
-    "LTCUSD": { displayName: "LTCUSD", name: "LTCUSD" },
-    "ZECUSD": { displayName: "ZECUSD", name: "ZECUSD" }
+CoinoneService.CurrencyPairs = {
+    "BTCKRW": { displayName: "BTCKRW", name: "BTC" },
+    "IOTKRW": { displayName: "IOTKRW", name: "IOTA" }
 };
-exports.BitfinexService = BitfinexService;
-//# sourceMappingURL=bitfinex-service.js.map
+exports.CoinoneService = CoinoneService;
+//# sourceMappingURL=coinone-service.js.map

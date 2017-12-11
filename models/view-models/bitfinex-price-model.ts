@@ -1,4 +1,5 @@
 export interface IBitfinexPriceModel {
+    currency: string;
     mid: number;
     bid: number;
     ask: number;

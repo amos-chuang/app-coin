@@ -1,16 +1,19 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Bluebird = require("bluebird");
-const bitfinex_service_1 = require("../services/bitfinex-service");
-class Controller {
-    constructor(req, res) {
+import * as Bluebird from "bluebird";
+import * as Express from "express";
+import { CoinoneService } from "../services/coinone-service";
+import { config } from "bluebird";
+
+export class Controller {
+    private req: Express.Request;
+    private res: Express.Response;
+    constructor(req: Express.Request, res: Express.Response) {
         this.req = req;
         this.res = res;
     }
-    query() {
-        var currencyName = this.req.query.currencyName;
-        var target = bitfinex_service_1.BitfinexService.CurrencyPairs[currencyName];
-        var service = new bitfinex_service_1.BitfinexService();
+    public query() {
+        var currencyName = this.req.query.currencyName as string;
+        var target = CoinoneService.CurrencyPairs[currencyName];
+        var service = new CoinoneService();
         Bluebird.try(() => {
             return service.getPrice(target);
         }).then((data) => {
@@ -23,8 +26,6 @@ class Controller {
             this.res.json({
                 msg: new String(err)
             });
-        });
+        })
     }
 }
-exports.Controller = Controller;
-//# sourceMappingURL=bitfinex-controller.js.map

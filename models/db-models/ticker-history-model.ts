@@ -5,6 +5,7 @@ export interface ITickerHistoryModel extends mongoose.Document {
     lastPrice: number;
     lowPrice: number;
     highPrice: number;
+    createdAt: Date;
 }
 
 const tickerHistorySchema = new mongoose.Schema({

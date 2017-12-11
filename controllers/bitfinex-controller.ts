@@ -11,8 +11,11 @@ export class Controller {
     }
     public query() {
         var currencyName = this.req.query.currencyName as string;
+        var target = BitfinexService.CurrencyPairs[currencyName];
         var service = new BitfinexService();
-        service.getPrice(currencyName).then((data) => {
+        Bluebird.try(() => {
+            return service.getPrice(target);
+        }).then((data) => {
             this.res.header("Access-Control-Allow-Origin", '*');
             this.res.header("Access-Control-Allow-Credentials", 'true');
             this.res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
