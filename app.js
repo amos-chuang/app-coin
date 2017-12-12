@@ -8,6 +8,7 @@ var fileUpload = require('express-fileupload');
 var expressLayouts = require('express-ejs-layouts');
 var mvcRoute = require('./routes/mvc-route');
 var mongoose = require('mongoose');
+var jobSchedulerService = require('./services/job-scheduler-service');
 
 // db setup
 require('./db')
@@ -48,5 +49,9 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+// start job scheduler
+var jobScheduler = new jobSchedulerService.JobSchedulerService();
+jobScheduler.start();
 
 module.exports = app;

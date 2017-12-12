@@ -90,7 +90,7 @@
             <td></td>
             <td></td>
         </tr>
-        <tr style="display:none;" v-show="tradingList['BTCUSD'].isShow">
+        <!-- <tr style="display:none;" v-show="tradingList['BTCUSD'].isShow">
             <td></td>
             <td colspan="6">
                 <table>
@@ -110,7 +110,7 @@
                     </tr>
                 </table>
             </td>
-        </tr>
+        </tr> -->
         <tr v-for="target in coinoneTargetCurrencyList" :currencyName="target.name">
             <td class="toggleButton" @click="toggleTradingData(target.name)">
                 <span v-text="target.display"></span>
