@@ -21,7 +21,7 @@ export class Controller {
             this.res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
             this.res.json(data);
         }).catch((err) => {
-            this.res.statusCode = 500;
+            this.res.statusCode = 400;
             this.res.json({
                 msg: new String(err)
             });
