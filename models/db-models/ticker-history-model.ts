@@ -5,6 +5,8 @@ export interface ITickerHistoryModel extends mongoose.Document {
     lastPrice: number;
     lowPrice: number;
     highPrice: number;
+    dailyChange: number;
+    dailyChangePercent: number;
     createdAt: Date;
 }
 
@@ -12,7 +14,9 @@ const tickerHistorySchema = new mongoose.Schema({
     currency: String,
     lastPrice: Number,
     lowPrice: Number,
-    highPrice: Number
+    highPrice: Number,
+    dailyChange: Number,
+    dailyChangePercent: Number,
 }, { timestamps: true });
 
 const TickerHistory = mongoose.model<ITickerHistoryModel>("TickerHistory", tickerHistorySchema);

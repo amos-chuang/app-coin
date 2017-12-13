@@ -4,39 +4,6 @@ const Bluebird = require("bluebird");
 const https = require("https");
 const ticker_history_model_1 = require("../models/db-models/ticker-history-model");
 class BitfinexService {
-    getPrice(currencyName) {
-        return new Bluebird((resolve, reject) => {
-            var findCondition = {
-                currency: currencyName.displayName
-            };
-            var sortCondition = {
-                createdAt: -1
-            };
-            Bluebird.try(() => {
-                return ticker_history_model_1.default.find(findCondition).sort(sortCondition).then();
-            }).then((res) => {
-                var now = new Date().getTime();
-                if (res.length > 0 && (now - res[0].createdAt.getTime()) < BitfinexService.DataEffectiveTime) {
-                    console.log("");
-                    console.log("Bitfinex [" + res[0].currency + " : " + res[0].lastPrice + "] ... read from db _ time diff : " + (now - res[0].createdAt.getTime()));
-                    console.log("");
-                    return Bluebird.resolve(res[0]);
-                }
-                else {
-                    return Bluebird.reject("waiting for data cache");
-                }
-            }).then((res) => {
-                if (res) {
-                    resolve(res);
-                }
-                else {
-                    reject("can't find ticker history");
-                }
-            }).catch((err) => {
-                reject(err);
-            });
-        });
-    }
     query(currencyName) {
         //https://api.bitfinex.com/v1/pubticker/IOTUSD
         return new Bluebird((resolve, reject) => {
@@ -111,6 +78,7 @@ class BitfinexService {
                         Bluebird.try(() => {
                             var index = 0;
                             var result = [];
+                            var service = new BitfinexService();
                             function processData() {
                                 var data = dataList[index];
                                 var currencyName = "";
@@ -124,10 +92,11 @@ class BitfinexService {
                                 priceModel.currency = currencyName;
                                 priceModel.bid = parseFloat(data[1]);
                                 priceModel.ask = parseFloat(data[3]);
+                                priceModel.dailyChange = parseFloat(data[5]);
+                                priceModel.dailyChangePercent = parseFloat(data[6]);
                                 priceModel.last_price = parseFloat(data[7]);
                                 priceModel.high = parseFloat(data[9]);
                                 priceModel.low = parseFloat(data[10]);
-                                var service = new BitfinexService();
                                 service.insertTickerHistory(priceModel).then((res) => {
                                     if (res) {
                                         result.push(res);
@@ -176,44 +145,17 @@ class BitfinexService {
             });
         });
     }
-    cleanDB() {
-        return new Bluebird((resolve, reject) => {
-            Bluebird.try(() => {
-                var sortCondition = {
-                    createdAt: 1
-                };
-                return ticker_history_model_1.default.find({}).sort(sortCondition).then();
-            }).then((res) => {
-                if (res.length > 0) {
-                    var now = new Date().getTime();
-                    for (var i = 0; i < res.length - 3; i++) {
-                        try {
-                            if (res[i] && (now - res[i].createdAt.getTime()) > BitfinexService.DataEffectiveTime) {
-                                ticker_history_model_1.default.findById(res[i].id).then((row) => {
-                                    if (row) {
-                                        row.remove();
-                                    }
-                                });
-                            }
-                        }
-                        catch (e) { }
-                    }
-                }
-            }).catch((err) => {
-                reject(err);
-            });
-        });
-    }
     convertToTickerHistoryModel(data) {
         var result = new ticker_history_model_1.default;
         result.currency = data.currency;
         result.lastPrice = data.last_price;
         result.lowPrice = data.low;
         result.highPrice = data.high;
+        result.dailyChange = data.dailyChange;
+        result.dailyChangePercent = data.dailyChangePercent;
         return result;
     }
 }
-BitfinexService.DataEffectiveTime = 5000;
 BitfinexService.CurrencyPairs = {
     "BTCUSD": { displayName: "BTCUSD", name: "BTCUSD" },
     "IOTUSD": { displayName: "IOTUSD", name: "IOTUSD" },
@@ -228,7 +170,9 @@ BitfinexService.CurrencyPairsV2 = {
     "XMRUSD": { displayName: "XMRUSD", name: "tXMRUSD" },
     "ETHUSD": { displayName: "ETHUSD", name: "tETHUSD" },
     "LTCUSD": { displayName: "LTCUSD", name: "tLTCUSD" },
-    "ZECUSD": { displayName: "ZECUSD", name: "tZECUSD" }
+    "ZECUSD": { displayName: "ZECUSD", name: "tZECUSD" },
+    "XRPUSD": { displayName: "XRPUSD", name: "tXRPUSD" },
+    "DSHUSD": { displayName: "DSHUSD", name: "tDSHUSD" },
 };
 BitfinexService.CurrencyPairsV2List = [
     { displayName: "BTCUSD", name: "tBTCUSD" },
@@ -236,7 +180,9 @@ BitfinexService.CurrencyPairsV2List = [
     { displayName: "XMRUSD", name: "tXMRUSD" },
     { displayName: "ETHUSD", name: "tETHUSD" },
     { displayName: "LTCUSD", name: "tLTCUSD" },
-    { displayName: "ZECUSD", name: "tZECUSD" }
+    { displayName: "ZECUSD", name: "tZECUSD" },
+    { displayName: "XRPUSD", name: "tXRPUSD" },
+    { displayName: "DSHUSD", name: "tDSHUSD" },
 ];
 exports.BitfinexService = BitfinexService;
 //# sourceMappingURL=bitfinex-service.js.map

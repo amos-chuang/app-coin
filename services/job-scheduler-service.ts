@@ -1,5 +1,7 @@
 import * as Bluebird from "bluebird";
+import { BaseService } from "./base-service";
 import { BitfinexService } from "./bitfinex-service";
+import { BittrexService } from "./bittrex-service";
 
 interface ISchedule {
     intervalSec: number;
@@ -14,8 +16,12 @@ export class JobSchedulerService {
             fn: new BitfinexService().queryAll
         },
         {
+            intervalSec: 3,
+            fn: new BittrexService().queryAll
+        },
+        {
             intervalSec: 600,
-            fn: new BitfinexService().cleanDB
+            fn: new BaseService().cleanDB
         }
     ];
     public start() {

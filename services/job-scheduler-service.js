@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Bluebird = require("bluebird");
+const base_service_1 = require("./base-service");
 const bitfinex_service_1 = require("./bitfinex-service");
+const bittrex_service_1 = require("./bittrex-service");
 class JobSchedulerService {
     constructor() {
         this.schedule = [
@@ -10,8 +12,12 @@ class JobSchedulerService {
                 fn: new bitfinex_service_1.BitfinexService().queryAll
             },
             {
+                intervalSec: 3,
+                fn: new bittrex_service_1.BittrexService().queryAll
+            },
+            {
                 intervalSec: 600,
-                fn: new bitfinex_service_1.BitfinexService().cleanDB
+                fn: new base_service_1.BaseService().cleanDB
             }
         ];
     }

@@ -1,11 +1,11 @@
 import * as Bluebird from "bluebird";
 import * as https from "https";
+import { BaseService } from "./base-service";
 import { IBitfinexPriceModel } from "../models/view-models/bitfinex-price-model";
 import { default as TickerHistory, ITickerHistoryModel } from "../models/db-models/ticker-history-model";
 import { ICurrencyPairNameModel } from "../models/view-models/currency-pair-name-model";
 
 export class BitfinexService {
-    public static DataEffectiveTime = 5000;
     public static CurrencyPairs: { [name: string]: ICurrencyPairNameModel } = {
         "BTCUSD": { displayName: "BTCUSD", name: "BTCUSD" },
         "IOTUSD": { displayName: "IOTUSD", name: "IOTUSD" },
@@ -20,7 +20,9 @@ export class BitfinexService {
         "XMRUSD": { displayName: "XMRUSD", name: "tXMRUSD" },
         "ETHUSD": { displayName: "ETHUSD", name: "tETHUSD" },
         "LTCUSD": { displayName: "LTCUSD", name: "tLTCUSD" },
-        "ZECUSD": { displayName: "ZECUSD", name: "tZECUSD" }
+        "ZECUSD": { displayName: "ZECUSD", name: "tZECUSD" },
+        "XRPUSD": { displayName: "XRPUSD", name: "tXRPUSD" },
+        "DSHUSD": { displayName: "DSHUSD", name: "tDSHUSD" },
     };
     public static CurrencyPairsV2List: ICurrencyPairNameModel[] = [
         { displayName: "BTCUSD", name: "tBTCUSD" },
@@ -28,39 +30,10 @@ export class BitfinexService {
         { displayName: "XMRUSD", name: "tXMRUSD" },
         { displayName: "ETHUSD", name: "tETHUSD" },
         { displayName: "LTCUSD", name: "tLTCUSD" },
-        { displayName: "ZECUSD", name: "tZECUSD" }
+        { displayName: "ZECUSD", name: "tZECUSD" },
+        { displayName: "XRPUSD", name: "tXRPUSD" },
+        { displayName: "DSHUSD", name: "tDSHUSD" },
     ];
-    public getPrice(currencyName: ICurrencyPairNameModel) {
-        return new Bluebird<ITickerHistoryModel>((resolve, reject) => {
-            var findCondition = {
-                currency: currencyName.displayName
-            };
-            var sortCondition = {
-                createdAt: -1
-            };
-            Bluebird.try(() => {
-                return TickerHistory.find(findCondition).sort(sortCondition).then<ITickerHistoryModel[]>();
-            }).then((res) => {
-                var now = new Date().getTime();
-                if (res.length > 0 && (now - res[0].createdAt.getTime()) < BitfinexService.DataEffectiveTime) {
-                    console.log("");
-                    console.log("Bitfinex [" + res[0].currency + " : " + res[0].lastPrice + "] ... read from db _ time diff : " + (now - res[0].createdAt.getTime()));
-                    console.log("");
-                    return Bluebird.resolve(res[0]);
-                } else {
-                    return Bluebird.reject("waiting for data cache");
-                }
-            }).then((res) => {
-                if (res) {
-                    resolve(res);
-                } else {
-                    reject("can't find ticker history");
-                }
-            }).catch((err) => {
-                reject(err);
-            });
-        });
-    }
     private query(currencyName: ICurrencyPairNameModel) {
         //https://api.bitfinex.com/v1/pubticker/IOTUSD
         return new Bluebird<ITickerHistoryModel>((resolve, reject) => {
@@ -134,6 +107,7 @@ export class BitfinexService {
                         Bluebird.try(() => {
                             var index = 0;
                             var result = [] as ITickerHistoryModel[];
+                            var service = new BitfinexService();
                             function processData() {
                                 var data = dataList[index] as string[];
                                 var currencyName = "";
@@ -147,10 +121,11 @@ export class BitfinexService {
                                 priceModel.currency = currencyName;
                                 priceModel.bid = parseFloat(data[1]);
                                 priceModel.ask = parseFloat(data[3]);
+                                priceModel.dailyChange = parseFloat(data[5]);
+                                priceModel.dailyChangePercent = parseFloat(data[6]);
                                 priceModel.last_price = parseFloat(data[7]);
                                 priceModel.high = parseFloat(data[9]);
                                 priceModel.low = parseFloat(data[10]);
-                                var service = new BitfinexService();
                                 service.insertTickerHistory(priceModel).then((res) => {
                                     if (res) {
                                         result.push(res);
@@ -196,39 +171,15 @@ export class BitfinexService {
             });
         });
     }
-    public cleanDB() {
-        return new Bluebird<ITickerHistoryModel>((resolve, reject) => {
-            Bluebird.try(() => {
-                var sortCondition = {
-                    createdAt: 1
-                };
-                return TickerHistory.find({}).sort(sortCondition).then<ITickerHistoryModel[]>();
-            }).then((res) => {
-                if (res.length > 0) {
-                    var now = new Date().getTime();
-                    for (var i = 0; i < res.length - 3; i++) {
-                        try {
-                            if (res[i] && (now - res[i].createdAt.getTime()) > BitfinexService.DataEffectiveTime) {
-                                TickerHistory.findById(res[i].id as string).then((row) => {
-                                    if (row) {
-                                        row.remove();
-                                    }
-                                });
-                            }
-                        } catch (e) { }
-                    }
-                }
-            }).catch((err) => {
-                reject(err);
-            });
-        });
-    }
+
     private convertToTickerHistoryModel(data: IBitfinexPriceModel) {
         var result = new TickerHistory;
         result.currency = data.currency;
         result.lastPrice = data.last_price;
         result.lowPrice = data.low;
         result.highPrice = data.high;
+        result.dailyChange = data.dailyChange;
+        result.dailyChangePercent = data.dailyChangePercent;
         return result;
     }
 }

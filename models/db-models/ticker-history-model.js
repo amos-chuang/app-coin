@@ -5,7 +5,9 @@ const tickerHistorySchema = new mongoose.Schema({
     currency: String,
     lastPrice: Number,
     lowPrice: Number,
-    highPrice: Number
+    highPrice: Number,
+    dailyChange: Number,
+    dailyChangePercent: Number,
 }, { timestamps: true });
 const TickerHistory = mongoose.model("TickerHistory", tickerHistorySchema);
 exports.default = TickerHistory;
