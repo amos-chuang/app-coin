@@ -12,11 +12,11 @@ interface ISchedule {
 export class JobSchedulerService {
     private schedule: ISchedule[] = [
         {
-            intervalSec: 3,
+            intervalSec: 5,
             fn: new BitfinexService().queryAll
         },
         {
-            intervalSec: 3,
+            intervalSec: 5,
             fn: new BittrexService().queryAll
         },
         {

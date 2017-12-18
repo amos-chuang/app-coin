@@ -2,7 +2,7 @@ import * as Bluebird from "bluebird";
 import { default as TickerHistory, ITickerHistoryModel } from "../models/db-models/ticker-history-model";
 
 export class BaseService {
-    public static DataEffectiveTime = 5000;
+    public static DataEffectiveTime = 12000;
     public cleanDB() {
         return new Bluebird<ITickerHistoryModel>((resolve, reject) => {
             Bluebird.try(() => {
