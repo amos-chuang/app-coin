@@ -71,8 +71,8 @@
         <tr>
             <th width="100">Currency</th>
             <th>Price</th>
-            <th>Daily</th>
             <th>Daily %</th>
+            <th>Daily</th>
             <th>Holdings</th>
             <th>Cost</th>
             <th>Value</th>
@@ -140,6 +140,11 @@
             <td></td>
         </tr>
     </table>
+    <hr>
+    <hr>
+    <div>
+        <div v-for="row in sweetgoldList">{{row}}</div>
+    </div>
 </div>
 
 <%- contentFor('scripts') %>
@@ -188,6 +193,8 @@
                     priceList: {},
                     //Coinone
                     coinonePriceList: {},
+                    //PTT
+                    sweetgoldList: [],
                 },
                 methods: {
                     toggleTradingData: (currencyName) => {
@@ -200,6 +207,7 @@
                         refreshCurrentDateTime();
                         queryBitoex();
                         refreshCurrencyPrice();
+                        getSweetgoldList();
                     }, 1);
                     //set interval
                     setInterval(() => {
@@ -211,6 +219,9 @@
                     setInterval(() => {
                         refreshCurrencyPrice();
                     }, 5000);
+                    setInterval(() => {
+                        getSweetgoldList();
+                    }, 600000);
                 }
             });
         };
@@ -288,5 +299,16 @@
             }
             Vue.set(app, "tradingList", tradingList);
             //console.log(tradingList[currencyName].isShow);
+        }
+        function getSweetgoldList() {
+            console.log("get list");
+            $.ajax({
+                method: "GET",
+                url: "./ptt/getDailyDiscussionSweetgold",
+                success: function (data) {
+                    console.log(data);
+                    Vue.set(app, "sweetgoldList", data);
+                }
+            });
         }
     </script>

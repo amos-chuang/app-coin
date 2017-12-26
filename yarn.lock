@@ -1192,6 +1192,10 @@ latest-version@^3.0.0:
   dependencies:
     package-json "^4.0.0"
 
+linqts@^1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/linqts/-/linqts-1.10.0.tgz#9bac6ed891d2eb62c27751dddad53e7e65799e6c"
+
 lodash._baseassign@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/lodash._baseassign/-/lodash._baseassign-3.2.0.tgz#8c38a099500f215ad09e59f1722fd0c52bfe0a4e"

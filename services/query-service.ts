@@ -36,7 +36,11 @@ export class QueryService {
                 createdAt: -1
             };
             Bluebird.try(() => {
-                return TickerHistory.find(findCondition).sort(sortCondition).then<ITickerHistoryModel[]>();
+                if (global.isDbConnected) {
+                    return TickerHistory.find(findCondition).sort(sortCondition).then<ITickerHistoryModel[]>();
+                } else {
+                    return Bluebird.reject("db connect error");
+                }
             }).then((res) => {
                 var now = new Date().getTime();
                 if (res.length > 0 && (now - res[0].createdAt.getTime()) < BaseService.DataEffectiveTime) {

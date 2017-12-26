@@ -24,6 +24,7 @@
     "express": "^4.16.2",
     "express-ejs-layouts": "^2.3.1",
     "express-fileupload": "^0.3.0",
+    "linqts": "^1.10.0",
     "mongoose": "^4.13.4",
     "morgan": "^1.9.0",
     "nodemon": "^1.12.5",
