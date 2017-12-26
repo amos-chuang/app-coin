@@ -8,15 +8,15 @@ class JobSchedulerService {
     constructor() {
         this.schedule = [
             {
-                intervalSec: 5000000000,
+                intervalSec: 5,
                 fn: new bitfinex_service_1.BitfinexService().queryAll
             },
             {
-                intervalSec: 50000000000,
+                intervalSec: 5,
                 fn: new bittrex_service_1.BittrexService().queryAll
             },
             {
-                intervalSec: 60000000000,
+                intervalSec: 600,
                 fn: new base_service_1.BaseService().cleanDB
             }
         ];
