@@ -8,6 +8,7 @@ const tickerHistorySchema = new mongoose.Schema({
     highPrice: Number,
     dailyChange: Number,
     dailyChangePercent: Number,
+    prevDayLastPrice: Number,
 }, { timestamps: true });
 const TickerHistory = mongoose.model("TickerHistory", tickerHistorySchema);
 exports.default = TickerHistory;

@@ -65,9 +65,16 @@ class BittrexService {
                                     Bluebird.try(() => {
                                         return service.insertTickerHistory(data);
                                     }).then((res) => {
+                                        console.log("Bittrex :");
                                         if (res) {
+                                            console.log(res);
                                             result.push(res);
                                         }
+                                    }).catch((e) => {
+                                        /*console.log("===");
+                                        console.log(e);
+                                        console.log(data);
+                                        console.log("===");*/
                                     }).finally(() => {
                                         index++;
                                         if (index < dataList.length) {
@@ -139,7 +146,8 @@ class BittrexService {
             result.lowPrice = data.Low;
             result.highPrice = data.High;
             result.dailyChange = data.Last - data.PrevDay;
-            result.dailyChangePercent = Math.round((1 - (data.Last / data.PrevDay)) * 1000) / 1000;
+            result.dailyChangePercent = 0;
+            result.prevDayLastPrice = data.PrevDay;
         }
         return result;
     }

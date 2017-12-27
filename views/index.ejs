@@ -249,7 +249,9 @@
                 success: function (data) {
                     if (currencyName == "XLMBTC" && app.priceList["BTCUSD"]) {
                         data.lastPrice = data.lastPrice * app.priceList["BTCUSD"].lastPrice;
-                        data.dailyChange = data.dailyChange.toFixed(8);
+                        data.prevDayLastPrice = data.prevDayLastPrice * app.priceList["BTCUSD"].lastPrice;
+                        data.dailyChange = data.lastPrice - data.prevDayLastPrice;
+                        data.dailyChangePercent = Math.round(((data.lastPrice / data.prevDayLastPrice) - 1) * 1000) / 1000;
                         //console.log(data);
                     }
                     var temp = app.priceList;
