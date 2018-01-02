@@ -67,7 +67,7 @@ export class PttService {
                         var temp = regex.exec(line);
                         if (temp != null && temp[1] == "sweetgold") {
                             console.log(line);
-                            result.push(temp[3] + " sweetgold " + temp[2]);
+                            result.unshift(temp[3] + " sweetgold " + temp[2]);
                         }
                     }
                     resolve(result);
