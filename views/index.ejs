@@ -91,8 +91,8 @@
                 <span style="color:#a00000" v-if="priceList[target.name] && priceList[target.name].dailyChangePercent<0" v-text="priceList[target.name].dailyChangePercent"></span>
             </td>
             <td>
-                <span style="color:#007c02" v-if="priceList[target.name] && priceList[target.name].dailyChange>0" v-text="priceList[target.name].dailyChange"></span>
-                <span style="color:#a00000" v-if="priceList[target.name] && priceList[target.name].dailyChange<0" v-text="priceList[target.name].dailyChange"></span>
+                <span style="color:#007c02" v-if="priceList[target.name] && priceList[target.name].dailyChange>0" v-text="Math.round(priceList[target.name].dailyChange*100000000)/100000000"></span>
+                <span style="color:#a00000" v-if="priceList[target.name] && priceList[target.name].dailyChange<0" v-text="Math.round(priceList[target.name].dailyChange*100000000)/100000000"></span>
             </td>
             <td></td>
             <td></td>
